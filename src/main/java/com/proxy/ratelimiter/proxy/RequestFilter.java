@@ -1,6 +1,7 @@
 package com.proxy.ratelimiter.proxy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.proxy.ratelimiter.dto.ErrorResponse;
 import com.proxy.ratelimiter.models.UserTokenLimit;
 import com.proxy.ratelimiter.service.RateLimitValidator;
 import com.proxy.ratelimiter.service.RequestDetailService;
@@ -34,13 +35,13 @@ public class RequestFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
-        try {
 
+        String clientId = httpServletRequest.getHeader("x-api-client-id");
+        String userToken = httpServletRequest.getHeader("x-api-token");
+        try {
             if ("/register".equals(httpServletRequest.getRequestURI()) && "POST".equalsIgnoreCase(httpServletRequest.getMethod())) {
                 filterChain.doFilter(servletRequest, servletResponse);
             } else {
-                String userToken = httpServletRequest.getHeader("x-api-token");
-                String clientId = httpServletRequest.getHeader("x-api-client-id");
                 UserTokenLimit userTokenLimit = userTokenLimitService.validateToken(clientId, userToken);
                 if (!rateLimitValidator.validateAndUpdateRateLimit(userTokenLimit)) {
                     StopWatch stopWatch = new StopWatch();
@@ -53,8 +54,14 @@ public class RequestFilter implements Filter {
             }
         } catch (Exception e) {
             LOGGER.error("Exception in request filter", e);
+            ErrorResponse errorResponse = ErrorResponse.builder()
+                    .message(e.getMessage())
+                    .timestamp(System.currentTimeMillis())
+                    .clientId(clientId)
+                    .build();
             ((HttpServletResponse) servletResponse).setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            servletResponse.getWriter().println(e.getMessage());
+            servletResponse.getWriter().println(mapper.writeValueAsString(errorResponse));
+            servletResponse.setContentType("application/json");
         }
     }
 }
