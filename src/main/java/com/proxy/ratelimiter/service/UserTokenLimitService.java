@@ -40,11 +40,11 @@ public class UserTokenLimitService {
     public UserTokenLimit validateToken(String clientId, String token) {
         Optional<UserTokenLimit> userLimitRecord = this.userTokenLimitRepository.findById(clientId);
         if (!userLimitRecord.isPresent()) {
-            throw new IllegalStateException("User requested with invalid client id, " + clientId);
+            throw new IllegalStateException("User requested with an invalid client id, " + clientId);
         }
         UserTokenLimit userTokenLimit = userLimitRecord.get();
         if (!userTokenLimit.getToken().equals(HashUtil.hashData(token, userTokenLimit.getSalt()))) {
-            throw new IllegalStateException("Client with id " + clientId + " requested with invalid api-token");
+            throw new IllegalStateException("Client with id " + clientId + " requested with an invalid api-token");
         }
         return userTokenLimit;
     }
