@@ -16,7 +16,7 @@ public class RateLimitValidator {
         Long rateLimit = userTokenLimit.getRateLimit();
         Long currentHitCount = this.userHitsCountCache.getClientHitCount(clientId);
         if (currentHitCount > rateLimit) {
-            throw new IllegalStateException("You have already exceeded your hourly quota! If you still want to use the service, increase the quota limit.");
+            throw new IllegalStateException("You have used your hourly quota! If you want to use our service, please request to increase your rate limit quota.");
         }
         this.userHitsCountCache.updateClientHitCount(clientId, currentHitCount + 1);
         return false;
