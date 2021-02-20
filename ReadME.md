@@ -1,15 +1,18 @@
-# Notification System Design
+# Rate Limiter Proxy
 
 ## Design Diagram
+
 ![Design Diagram](/images/System.png)
 
 ## TechStack
+
 1. Springboot v2.4.3
 2. Java 8
 3. Redis
 4. Postgres DB
 
 ## Read More About,
+
 1. Springboot sleuth - https://spring.io/projects/spring-cloud-sleuth
 2. Java 8 - https://openjdk.java.net/projects/jdk/8/
 3. Redis - https://redis.io/
@@ -18,6 +21,7 @@
 ## Project Setup
 
 ## Redis Download
+
 ```
 1. Download redis from following link - https://redis.io/download
 2. Extract the redis and set the path to Environment variables
@@ -25,6 +29,7 @@
 ```
 
 ## To start the application
+
 ```
 1. git@github.com:NirakhRastogi/Notification-System.git
 2. cd Notification-System
@@ -32,7 +37,9 @@
 ```
 
 # Endpoints
+
 ## To register a user
+
 ```
 POST http://localhost:8080/register/${userId}
 
@@ -44,6 +51,7 @@ Request Body
 ```
 
 ## To hit test controller
+
 ```
 GET http://localhost:8080/ping
 
